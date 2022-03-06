@@ -1,12 +1,21 @@
 terraform {
+  required_version = "~> 0.14"
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
     }
   }
-  required_version = ">= 1.1.0"
-}
 
+  backend "s3" {
+    bucket  = "terraform-laboratory"
+    key     = "tfstates/tf-poc.tfstate"
+    region  = "us-west-2"
+    encrypt = "true"
+    profile = "dino-lab"
+  }
+
+}
 
 data "aws_availability_zones" "available" {
   state = "available"
@@ -18,7 +27,6 @@ provider "aws" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "2.21.0"
 
   name = var.vpc_name
   cidr = var.vpc_cidr
